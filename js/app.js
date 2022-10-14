@@ -11,27 +11,40 @@ const contenedorCitas = document.querySelector("#citas");
 
 let editing;
 
+document.addEventListener("DOMContentLoaded", () => {
+  //agregado para Local
+  ui.imprimirCita(adminCitas);
+});
+
 eventListeners();
 
 class Citas {
   constructor() {
-    this.citas = [];
+    this.citas = JSON.parse(localStorage.getItem("arregloCitas")) || []; //editado para Local
   }
   addCita(cita) {
     this.citas = [...this.citas, cita];
-    console.log(this.citas);
+    sincronizarLocalStorage(this.citas); //agregado para Local
   }
 
   deleteCita(id) {
     this.citas = this.citas.filter((cita) => cita.id !== id);
+    sincronizarLocalStorage(this.citas); //agregado para Local
   }
 
   editeCita(citaAct) {
     this.citas = this.citas.map((cita) =>
       cita.id === citaAct.id ? citaAct : cita
     );
+    sincronizarLocalStorage(this.citas); //agregado para Local
   }
 }
+
+function sincronizarLocalStorage(thisCitas) {
+  //agregado para Local
+  localStorage.setItem("arregloCitas", JSON.stringify(thisCitas));
+}
+
 class UI {
   printAlert(mensaje, tipo) {
     const divMen = document.createElement("div");
@@ -125,7 +138,6 @@ function eventListeners() {
   fechaIn.addEventListener("input", datoCita);
   horaIn.addEventListener("input", datoCita);
   sintoIn.addEventListener("input", datoCita);
-
   formulario.addEventListener("submit", nuevaCita);
 }
 
@@ -179,7 +191,6 @@ function reiniciarObj() {
 }
 
 function deleteCita(id) {
-  /* console.log(id); */
   adminCitas.deleteCita(id);
   ui.printAlert("cita eliminada!");
   ui.imprimirCita(adminCitas);
@@ -207,7 +218,6 @@ function editCita(cita) {
 
   formulario.querySelector(`button[type="submit"]`).textContent =
     "Guardar Cambios";
-  /*   console.log(cita);
-   */
+
   editing = true;
 }
